@@ -8,10 +8,11 @@
 #       https://github.com/google/glog/files/393474/BUILD.txt
 
 def glog_library(namespace='google', with_gflags=1):
-    if native.repository_name() != '@':
-        gendir = '$(GENDIR)/external/' + native.repository_name().lstrip('@')
-    else:
+    repo_name = native.repository_name()
+    if repo_name == '@':
         gendir = '$(GENDIR)'
+    else:
+        gendir = '$(GENDIR)/external/' + repo_name.lstrip('@')
 
     native.cc_library(
         name = 'glog',
@@ -72,13 +73,13 @@ def glog_library(namespace='google', with_gflags=1):
             '-DHAVE___ATTRIBUTE__',
 
             # Include generated header files.
-            '-I%s/glog_internal' % gendir,
+            '-I' + '/'.join([gendir, native.package_name(), 'glog_internal']),
         ] + ([
             # Use gflags to parse CLI arguments.
             '-DHAVE_LIB_GFLAGS',
         ] if with_gflags else []),
         deps = [
-            '@com_github_gflags_gflags//:gflags',
+            '//third_party/cc/gflags',
         ] if with_gflags else [],
     )
 
