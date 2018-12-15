@@ -79,7 +79,7 @@ def glog_library(namespace='google', with_gflags=1):
             '-DHAVE_LIB_GFLAGS',
         ] if with_gflags else []),
         deps = [
-            '//third_party/cc/gflags',
+            '@com_github_gflags_gflags//:gflags',
         ] if with_gflags else [],
     )
 
